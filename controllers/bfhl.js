@@ -3,14 +3,18 @@ exports.bfhlHandler = (req, res) => {
     const { data } = req.body;
 
     if (!Array.isArray(data)) {
-      return res.status(400).json({ is_success: false, error: "Invalid input format" });
+      return res.status(400).json({
+        is_success: false,
+        error: "Invalid input format. Expected { data: [] }"
+      });
     }
 
     const numbers = data.filter(item => !isNaN(item));
-    const alphabets = data.filter(item => /^[A-Za-z]$/.test(item));
+    const alphabets = data.filter(item => /^[A-Za-z]+$/.test(item));
 
-    let highestLowercase = "";
-    const lowercases = alphabets.filter(ch => ch === ch.toLowerCase());
+    // Highest lowercase alphabet
+    let highestLowercase = [];
+    const lowercases = alphabets.filter(ch => /^[a-z]$/.test(ch));
     if (lowercases.length > 0) {
       highestLowercase = [lowercases.sort().reverse()[0]];
     }
@@ -25,6 +29,9 @@ exports.bfhlHandler = (req, res) => {
       highest_lowercase_alphabet: highestLowercase
     });
   } catch (err) {
-    res.status(500).json({ is_success: false, error: err.message });
+    res.status(500).json({
+      is_success: false,
+      error: err.message
+    });
   }
 };
